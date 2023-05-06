@@ -18,5 +18,10 @@ Tracking of objects (mainly vehicels) using optical flow.
 
 
 ### Implement  cv.calcOpticalFlowPyrLK() 
+- optical flow estiamtes the change in pixel cooridantes (?). How to transform the 3D coordinates? 
 - run test script from openCV
 - implement for this spceific project
+    - make a track manager
+
+
+## Learned so far / Questions

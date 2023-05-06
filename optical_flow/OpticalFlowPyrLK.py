@@ -1,26 +1,30 @@
 import numpy as np
 import cv2 as cv
 import argparse
+from PIL import Image
 
-parser = argparse.ArgumentParser(description='This sample demonstrates Lucas-Kanade Optical Flow calculation. \
+parser = argparse.ArgumentParser(
+    description="This sample demonstrates Lucas-Kanade Optical Flow calculation. \
                                               The example file can be downloaded from: \
-                                              https://www.bogotobogo.com/python/OpenCV_Python/images/mean_shift_tracking/slow_traffic_small.mp4')
+                                              https://www.bogotobogo.com/python/OpenCV_Python/images/mean_shift_tracking/slow_traffic_small.mp4"
+)
 # parser.add_argument('image', type=str, help='path to image file')
 args = parser.parse_args()
 
 # cap = cv.VideoCapture(args.image)
-cap = cv.VideoCapture('https://www.bogotobogo.com/python/OpenCV_Python/images/mean_shift_tracking/slow_traffic_small.mp4')
+cap = cv.VideoCapture(
+    "https://www.bogotobogo.com/python/OpenCV_Python/images/mean_shift_tracking/slow_traffic_small.mp4"
+)
 
 # params for ShiTomasi corner detection
-feature_params = dict( maxCorners = 100,
-                       qualityLevel = 0.3,
-                       minDistance = 7,
-                       blockSize = 7 )
+feature_params = dict(maxCorners=100, qualityLevel=0.3, minDistance=7, blockSize=7)
 
 # Parameters for lucas kanade optical flow
-lk_params = dict( winSize  = (15, 15),
-                  maxLevel = 2,
-                  criteria = (cv.TERM_CRITERIA_EPS | cv.TERM_CRITERIA_COUNT, 10, 0.03))
+lk_params = dict(
+    winSize=(15, 15),
+    maxLevel=2,
+    criteria=(cv.TERM_CRITERIA_EPS | cv.TERM_CRITERIA_COUNT, 10, 0.03),
+)
 
 # Create some random colors
 color = np.random.randint(0, 255, (100, 3))
@@ -28,15 +32,24 @@ color = np.random.randint(0, 255, (100, 3))
 # Take first frame and find corners in it
 ret, old_frame = cap.read()
 old_gray = cv.cvtColor(old_frame, cv.COLOR_BGR2GRAY)
-p0 = cv.goodFeaturesToTrack(old_gray, mask = None, **feature_params)
+p0 = cv.goodFeaturesToTrack(old_gray, mask=None, **feature_params)
+
+print(p0.shape)
+p0 = p0[:2, :, :]
+print(p0.shape)
 
 # Create a mask image for drawing purposes
 mask = np.zeros_like(old_frame)
 
-while(1):
+i_frame = 0
+
+while 1:
+    i_frame += 1
+    if i_frame == 102:
+        break
     ret, frame = cap.read()
     if not ret:
-        print('No frames grabbed!')
+        print("No frames grabbed!")
         break
 
     frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
@@ -46,8 +59,8 @@ while(1):
 
     # Select good points
     if p1 is not None:
-        good_new = p1[st==1]
-        good_old = p0[st==1]
+        good_new = p1[st == 1]
+        good_old = p0[st == 1]
 
     # draw the tracks
     for i, (new, old) in enumerate(zip(good_new, good_old)):
@@ -57,8 +70,18 @@ while(1):
         frame = cv.circle(frame, (int(a), int(b)), 5, color[i].tolist(), -1)
     img = cv.add(frame, mask)
 
-    cv.imshow('frame', img)
-    k = cv.waitKey(30) & 0xff
+    if (i_frame == 3) or (i_frame == 10) or (i_frame == 50) or (i_frame == 100):
+
+        # Save the Numpy array as Image
+        image_filename = "GTimg" + str(i_frame) + ".jpeg"
+        imgSave = Image.fromarray(frame)
+        imgSave.save(image_filename)
+
+        print('i frame', i_frame)
+        print(good_new)
+
+    cv.imshow("frame", img)
+    k = cv.waitKey(30) & 0xFF
     if k == 27:
         break
 

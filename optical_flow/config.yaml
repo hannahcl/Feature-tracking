@@ -1,0 +1,34 @@
+run_nr: 1
+
+#Tuning parameters for the lucas kanade method
+search:
+  n_stages : 4 #How many times to iterate the estiamte of p
+  blur_levels : [15, 7, 3, 1] #how large kernal is used to blur the image in every stage
+  search_windows_sz : [20, 15, 10, 10] #how large is the search window in every stage
+  evaluation_windows_sz : [10, 7, 5, 5] #how large is the window eavluated in the cost function, in every stage
+  use_pyramid: False
+  use_epipolar: False
+  use_prediction: False
+  use_inverse_composition : False
+
+#Flags passed to scipy.optimize.least_sqares()
+optimize:
+  method: 'dogbox' 
+  loss: 'arctan'
+
+run:
+  n_frames : 102
+  n_transformation_params : 2
+  n_features : 2
+
+  show_and_save_tracks : True
+  save_image_index : [3, 10, 50, 100]
+
+#Ground thruth for comparison
+gt:
+  tracks_frame_3: [[237.51762,150.13889],[301.1077,103.7322 ]]
+  tracks_frame_10: [[238.79219,153.61865],[303.31433, 105.66835]]
+  tracks_frame_50: [[244.10954,168.41335],[312.2983, 113.05156]]
+  tracks_frame_100: [[254.71289,187.72498],[327.3952, 124.8906 ]]
+
+
